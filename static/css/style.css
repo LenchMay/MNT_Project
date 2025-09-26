@@ -1,0 +1,122 @@
+/* Общие стили */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f3f7; /* светлый лавандовый фон */
+    color: #2e2a2f;
+    line-height: 1.6;
+}
+
+/* Навигация */
+nav {
+    background-color: #7a4ea3; /* насыщенный лавандовый */
+    padding: 10px;
+    display: flex;
+    gap: 15px;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s ease-in-out;
+}
+
+nav a:hover {
+    color: #d1c4e9; /* мягкий лавандовый при наведении */
+}
+
+/* Контент */
+.content {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgba(120, 80, 160, 0.2);
+}
+
+/* Заголовки */
+h1, h2 {
+    color: #5d3a8d; /* тёмно-лавандовый */
+}
+
+/* Посты */
+.post {
+    border-bottom: 1px solid #e2d6f3; /* светлая лавандовая линия */
+    padding: 15px 0;
+}
+
+.post:last-child {
+    border-bottom: none;
+}
+
+.post h2 {
+    margin: 0;
+    color: #5d3a8d;
+}
+
+.post p {
+    margin: 10px 0;
+    color: #3c3248;
+}
+
+.post-category {
+    font-size: 14px;
+    color: #7a4ea3; /* мягкий лавандовый */
+    margin-bottom: 15px;
+}
+
+.post-category a.category-link {
+    color: #9c7bb8;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.post-category a.category-link:hover {
+    color: #7f5ea0;
+    text-decoration: underline;
+}
+
+/* Кнопки-ссылки */
+a.button {
+    display: inline-block;
+    padding: 6px 6px;
+    margin-top: 10px;
+    background-color: #9c7bb8; /* основной лавандовый */
+    color: white !important;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+}
+
+a.button:hover {
+    background-color: #7f5ea0; /* более тёмный при наведении */
+}
+
+/* Список категорий */
+.category-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Кнопки категорий */
+.category-button {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #9c7bb8; /* основной лавандовый */
+    color: white !important;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(120, 80, 160, 0.2);
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+.category-button:hover {
+    background-color: #7f5ea0; /* более тёмный лавандовый */
+}
+

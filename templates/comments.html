@@ -9,5 +9,5 @@
             <p>{{ comment.text }}</p>
         </div>
     {% endfor %}
-    <a href="{{ url_for('show_post', post_id=post.id) }}">Назад к посту</a>
+    <a href="{{ url_for('show_post', post_id=post.id) }}" class="button">Назад к посту</a>
 {% endblock %}

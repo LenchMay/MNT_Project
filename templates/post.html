@@ -4,9 +4,12 @@
 
 {% block content %}
     <h1>{{ post.title }}</h1>
+    <a href="{{ url_for('show_category', category_id=post.category.id) }}" class="button">
+            {{ post.category.name }}
+    </a>
     <p>{{ post.content }}</p>
-    <p><em>Опубликовано: {{ post.created_at }}</em></p>
-    <a href="{{ url_for('show_comments', post_id=post.id) }}">Посмотреть комментарии</a>
+    <p><em>Опубликовано: {{ post.date_posted }}</em></p>
+    <a href="{{ url_for('show_comments', post_id=post.id) }}" class="button">Посмотреть комментарии</a>
     <br>
-    <a href="{{ url_for('all_posts') }}">Назад ко всем постам</a>
+    <a href="{{ url_for('all_posts') }}" class="button">Назад ко всем постам</a>
 {% endblock %}

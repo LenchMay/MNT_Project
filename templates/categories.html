@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Категории {{ post.title }}{% endblock %}
+{% block title %}Все категории{% endblock %}
 
 {% block content %}
-    <h1>Все категории</h1>
-    {% for category in categories %}
-        <div class="category">
-            <p>{{ category.name }}</p>
-        </div>
+<h1>Все категории</h1>
+<div class="category-list">
+    {% for category, post_count in categories %}
+        <a href="{{ url_for('show_category', category_id=category.id) }}" class="category-button">
+            {{ category.name }} ({{ post_count }})
+        </a>
     {% endfor %}
+</div>
 {% endblock %}

@@ -8,7 +8,9 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     date_posted = db.Column(db.DateTime, server_default=db.func.now())
     comments = db.relationship('Comment', backref='post', lazy=True)
-    category_id = db.relationship('Category', backref='post', lazy=True)
+
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    category = db.relationship('Category', backref='posts', lazy=True)
 
     def __repr__(self):
         return '<Post {self.title}>'

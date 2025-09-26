@@ -1,4 +1,6 @@
 from flask import Flask, render_template
+from sqlalchemy import func
+
 from models import db, Post, Comment, Category
 
 app = Flask(__name__)
@@ -10,7 +12,7 @@ db.init_app(app)
 
 @app.route('/')
 def index():
-    return '<h1>Welcome to Blog Post</h1>'
+    return render_template('base.html')
 
 @app.route('/posts')
 def all_posts():
@@ -29,8 +31,19 @@ def show_comments(post_id):
 
 @app.route('/categories')
 def all_categories():
-    categories = Category.query.all()
+    # Считаем количество постов в каждой категории
+    categories = db.session.query(
+        Category,
+        func.count(Post.id).label('post_count')
+    ).outerjoin(Post).group_by(Category.id).all()
+
+    # categories будет списком кортежей: (Category, post_count)
     return render_template('categories.html', categories=categories)
+
+@app.route('/category/<int:category_id>')
+def show_category(category_id):
+    category = Category.query.get_or_404(category_id)
+    return render_template('category.html', category=category)
 
 @app.route('/contacts')
 def contacts():
