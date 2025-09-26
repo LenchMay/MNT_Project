@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from models import db, Post, Comment
+from models import db, Post, Comment, Category
 
 app = Flask(__name__)
 
@@ -26,6 +26,11 @@ def show_post(post_id):
 def show_comments(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('comments.html', post=post)
+
+@app.route('/categories')
+def all_categories():
+    categories = Category.query.all()
+    return render_template('categories.html', categories=categories)
 
 @app.route('/contacts')
 def contacts():

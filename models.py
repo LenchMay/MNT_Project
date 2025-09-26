@@ -8,6 +8,7 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     date_posted = db.Column(db.DateTime, server_default=db.func.now())
     comments = db.relationship('Comment', backref='post', lazy=True)
+    category_id = db.relationship('Category', backref='post', lazy=True)
 
     def __repr__(self):
         return '<Post {self.title}>'
@@ -19,3 +20,10 @@ class Comment(db.Model):
 
     def __repr__(self):
         return '<Comment {self.text[:20]}>'
+
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+
+    def __repr__(self):
+        return '<Category {self.name}'
