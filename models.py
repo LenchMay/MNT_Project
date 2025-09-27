@@ -12,20 +12,35 @@ class Post(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
     category = db.relationship('Category', backref='posts', lazy=True)
 
-    def __repr__(self):
-        return '<Post {self.title}>'
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'content': self.content,
+            'date_posted': self.date_posted.isoformat(),
+            'comments_count': len(self.comments)
+        }
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
+    date_published = db.Column(db.DateTime, server_default=db.func.now())
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
 
-    def __repr__(self):
-        return '<Comment {self.text[:20]}>'
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'text': self.text,
+            'date_published': self.date_published.isoformat(),
+            'post_id': self.post_id
+        }
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
 
-    def __repr__(self):
-        return '<Category {self.name}'
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
