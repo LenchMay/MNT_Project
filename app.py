@@ -1,57 +1,33 @@
-from flask import Flask, render_template
-from sqlalchemy import func
+from flask import Flask, jsonify
+from config import Config
+from models import db
+from routes.posts import posts_bp
+from routes.comments import comments_bp
+from routes.categories import categories_bp
 
-from models import db, Post, Comment, Category
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+    db.init_app(app)
 
-app = Flask(__name__)
+    app.register_blueprint(posts_bp, url_prefix='/api')
+    app.register_blueprint(comments_bp, url_prefix='/api')
+    app.register_blueprint(categories_bp, url_prefix='/api')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return jsonify({'error': 'Resource not found'}), 404
 
-db.init_app(app)
+    @app.errorhandler(500)
+    def internal_error(error):
+        db.session.rollback()
+        return jsonify({'error': 'Internal server error'}), 500
 
-@app.route('/')
-def index():
-    return render_template('base.html')
-
-@app.route('/posts')
-def all_posts():
-    posts = Post.query.all()
-    return render_template('posts.html', posts=posts)
-
-@app.route('/post/<int:post_id>')
-def show_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    return render_template('post.html', post=post)
-
-@app.route('/post/<int:post_id>/comments')
-def show_comments(post_id):
-    post = Post.query.get_or_404(post_id)
-    return render_template('comments.html', post=post)
-
-@app.route('/categories')
-def all_categories():
-    # Считаем количество постов в каждой категории
-    categories = db.session.query(
-        Category,
-        func.count(Post.id).label('post_count')
-    ).outerjoin(Post).group_by(Category.id).all()
-
-    # categories будет списком кортежей: (Category, post_count)
-    return render_template('categories.html', categories=categories)
-
-@app.route('/category/<int:category_id>')
-def show_category(category_id):
-    category = Category.query.get_or_404(category_id)
-    return render_template('category.html', category=category)
-
-@app.route('/contacts')
-def contacts():
-    cnt =   '1. Elena<br>' \
-            '2. Nikolay'
-    return cnt
-
-if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+
+    return app
+
+if __name__ == '__main__':
+    app = create_app()
+    app.run(debug=True, port=8088)

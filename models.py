@@ -18,7 +18,9 @@ class Post(db.Model):
             'title': self.title,
             'content': self.content,
             'date_posted': self.date_posted.isoformat(),
-            'comments_count': len(self.comments)
+            'comments_count': len(self.comments),
+            'category_id': self.category_id,
+            'category': self.category.name
         }
 
 class Comment(db.Model):
@@ -31,7 +33,7 @@ class Comment(db.Model):
         return {
             'id': self.id,
             'text': self.text,
-            'date_published': self.date_published.isoformat(),
+            'date_published': str(self.date_published) if hasattr(self, 'date_published') else None,
             'post_id': self.post_id
         }
 
