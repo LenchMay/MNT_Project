@@ -2,10 +2,12 @@ from flask import Blueprint, request, jsonify
 from models import db, Post
 from sqlalchemy.exc import IntegrityError
 from utils.validators import validate_post_data
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 posts_bp = Blueprint('posts', __name__)
 
 @posts_bp.route('/posts', methods=['GET'])
+@jwt_required()
 def get_posts():
     """
     Получение списка постов с пагинацией, фильтрацией и сортировкой
@@ -79,6 +81,7 @@ def create_post():
     - title: заголовок поста
     - content: содержимое поста
     """
+    current_user_id = int(get_jwt_identity())
     data = request.get_json()
 
     # Валидируем данные
@@ -91,7 +94,8 @@ def create_post():
         new_post = Post(
             title=data['title'],
             content=data['content'],
-            category_id=data.get('category_id')  # <-- добавили
+            category_id=data.get('category_id'),
+            user_id=current_user_id
         )
 
         db.session.add(new_post)
@@ -106,6 +110,7 @@ def create_post():
 
 
 @posts_bp.route('/posts/<int:post_id>', methods=['GET'])
+@jwt_required()
 def get_post(post_id):
     """
     Получение конкретного поста по ID
@@ -119,9 +124,14 @@ def update_post(post_id):
     """
     Полное обновление поста
     """
+    current_user_id = int(get_jwt_identity())
     post = Post.query.get_or_404(post_id)
     data = request.get_json()
 
+    # Проверка прав доступа
+    if post.user_id != current_user_id:
+        return jsonify({'error': 'Access denied'}), 403
+    data = request.get_json()
     # Валидируем данные
     is_valid, errors = validate_post_data(data)
     if not is_valid:
@@ -141,11 +151,17 @@ def update_post(post_id):
 
 
 @posts_bp.route('/posts/<int:post_id>', methods=['DELETE'])
+@jwt_required()
 def delete_post(post_id):
     """
     Удаление поста
     """
+    current_user_id = int(get_jwt_identity())
     post = Post.query.get_or_404(post_id)
+
+    # Проверка прав доступа
+    if post.user_id != current_user_id:
+        return jsonify({'error': 'Access denied'}), 403
 
     try:
         db.session.delete(post)

@@ -6,6 +6,7 @@ from models import db
 from routes.posts import posts_bp
 from routes.comments import comments_bp
 from routes.categories import categories_bp
+from routes.auth import auth_bp
 
 def create_app():
     app = Flask(__name__)
@@ -20,6 +21,7 @@ def create_app():
     app.register_blueprint(posts_bp, url_prefix='/api')
     app.register_blueprint(comments_bp, url_prefix='/api')
     app.register_blueprint(categories_bp, url_prefix='/api')
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
     # CLI команды для миграций
     @app.cli.command('db-init')

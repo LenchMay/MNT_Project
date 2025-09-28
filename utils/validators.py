@@ -62,3 +62,23 @@ def validate_user_data(data):
         errors['password'] = 'Password is required'
 
     return len(errors) == 0, errors
+
+def validate_user_data(data):
+    """
+    Валидация данных пользователя
+    Возвращает tuple: (is_valid, errors)
+    """
+    errors = {}
+
+    if not data:
+        errors['general'] = 'No data provided'
+        return False, errors
+
+    if not data.get('username'):
+        errors['username'] = 'Username is required'
+    if not data.get('email'):
+        errors['email'] = 'Email is required'
+    if not data.get('password'):
+        errors['password'] = 'Password is required'
+
+    return len(errors) == 0, errors
