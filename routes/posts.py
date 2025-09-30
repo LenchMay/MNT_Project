@@ -72,8 +72,8 @@ def get_posts():
 
         return jsonify({'error': 'Internal server error'}), 500
 
-
 @posts_bp.route('/posts', methods=['POST'])
+@jwt_required()
 def create_post():
     """
     Создание нового поста
@@ -120,6 +120,7 @@ def get_post(post_id):
 
 
 @posts_bp.route('/posts/<int:post_id>', methods=['PUT'])
+@jwt_required()
 def update_post(post_id):
     """
     Полное обновление поста
