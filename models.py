@@ -9,6 +9,8 @@ class Post(db.Model):
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
     date_posted = db.Column(db.DateTime, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime, server_default=db.func.now())
+
     comments = db.relationship('Comment', backref='post', lazy=True)
 
     category_id = db.Column(
@@ -30,6 +32,7 @@ class Post(db.Model):
             'title': self.title,
             'content': self.content,
             'date_posted': self.date_posted.isoformat(),
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'comments_count': len(self.comments),
             'category_id': self.category_id,
             'category': self.category.name,
