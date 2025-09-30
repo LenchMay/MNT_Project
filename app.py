@@ -21,7 +21,7 @@ def create_app():
     app.register_blueprint(posts_bp, url_prefix='/api')
     app.register_blueprint(comments_bp, url_prefix='/api')
     app.register_blueprint(categories_bp, url_prefix='/api')
-    app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(auth_bp, url_prefix='/api')
 
     # CLI команды для миграций
     @app.cli.command('db-init')
