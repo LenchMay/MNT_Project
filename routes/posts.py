@@ -1,13 +1,15 @@
 from flask import Blueprint, request, jsonify
-from models import db, Post
+from models import db, Post, User
 from sqlalchemy.exc import IntegrityError
+
+from utils.roles import role_required
 from utils.validators import validate_post_data
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 posts_bp = Blueprint('posts', __name__)
 
 @posts_bp.route('/posts', methods=['GET'])
-@jwt_required()
+
 def get_posts():
     """
     Получение списка постов с пагинацией, фильтрацией и сортировкой
@@ -68,12 +70,13 @@ def get_posts():
 
     except Exception as e:
 
-        print("Ошибка в get_posts:", e)  # <-- чтобы увидеть проблему в консоли
+        print("Ошибка в get_posts:", e)
 
         return jsonify({'error': 'Internal server error'}), 500
 
 @posts_bp.route('/posts', methods=['POST'])
 @jwt_required()
+@role_required('writer', 'admin')
 def create_post():
     """
     Создание нового поста
@@ -110,7 +113,7 @@ def create_post():
 
 
 @posts_bp.route('/posts/<int:post_id>', methods=['GET'])
-@jwt_required()
+
 def get_post(post_id):
     """
     Получение конкретного поста по ID
@@ -127,12 +130,13 @@ def update_post(post_id):
     """
     current_user_id = int(get_jwt_identity())
     post = Post.query.get_or_404(post_id)
+    user = User.query.get(current_user_id)
     data = request.get_json()
 
     # Проверка прав доступа
-    if post.user_id != current_user_id:
+    if user.role != 'admin' and post.user_id != current_user_id:
         return jsonify({'error': 'Access denied'}), 403
-    data = request.get_json()
+
     # Валидируем данные
     is_valid, errors = validate_post_data(data)
     if not is_valid:

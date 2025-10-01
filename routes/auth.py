@@ -15,40 +15,35 @@ auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
-    """Регистрация нового пользователя"""
     data = request.get_json()
 
-    # Валидация данных
-    is_valid, errors = validate_user_data(data)
-    if not is_valid:
-        return jsonify({'errors': errors}), 400
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+    role = data.get('role', 'commentator')
 
-    # Проверка уникальности
-    if User.query.filter_by(username=data['username']).first():
-        return jsonify({'error': 'Username already exists'}), 400
-    if User.query.filter_by(email=data['email']).first():
-        return jsonify({'error': 'Email already exists'}), 400
+    if not username or not email or not password:
+        return jsonify({'error': 'Missing required fields'}), 400
 
-    try:
-        # Создание пользователя
-        user = User(username=data['username'], email=data['email'])
-        user.set_password(data['password'])
+    # Проверка, что такого пользователя нет
+    if User.query.filter((User.username == username) | (User.email == email)).first():
+        return jsonify({'error': 'User already exists'}), 400
 
-        db.session.add(user)
-        db.session.commit()
+    user = User(
+        username=username,
+        email=email,
+        role=role
+    )
+    user.set_password(password)
 
-        # Генерация токенов
-        tokens = user.generate_tokens()
+    db.session.add(user)
+    db.session.commit()
 
-        return jsonify({
-            'message': 'User created successfully',
-            'user': user.to_dict(),
-            'tokens': tokens
-        }), 201
+    return jsonify({
+        'message': f'User {username} registered with role {role}',
+        'user': user.to_dict()
+    }), 201
 
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error': 'Registration failed'}), 500
 
 
 @auth_bp.route('/login', methods=['POST'])

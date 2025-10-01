@@ -1,6 +1,10 @@
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required
+
 from models import db, Post, Comment
 from sqlalchemy.exc import IntegrityError
+
+from utils.roles import role_required
 from utils.validators import validate_comment_data
 
 comments_bp = Blueprint('comments_bp', __name__)
@@ -15,6 +19,8 @@ def get_post_comments(post_id):
     return jsonify([comments.to_dict() for comments in comments])
 
 @comments_bp.route('/posts/<int:post_id>/comments', methods=['POST'])
+@jwt_required()
+@role_required('commentator', 'writer', 'admin')
 def create_comment(post_id):
     """
     Создание нового комментария для поста
@@ -52,6 +58,8 @@ def get_comment(comment_id):
 
 
 @comments_bp.route('/comments/<int:comment_id>', methods=['DELETE'])
+@role_required('admin')
+@jwt_required()
 def delete_comment(comment_id):
     """
     Удаление комментария

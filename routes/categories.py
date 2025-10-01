@@ -1,6 +1,10 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
+
 from models import db, Category, Post
 from sqlalchemy.exc import IntegrityError
+
+from utils.roles import role_required
 
 categories_bp = Blueprint('categories', __name__)
 
@@ -12,6 +16,8 @@ def get_categories():
 
 # Создать категорию
 @categories_bp.route('/categories', methods=['POST'])
+@jwt_required()
+@role_required('writer', 'admin')
 def create_category():
     data = request.get_json()
     if not data or 'name' not in data:

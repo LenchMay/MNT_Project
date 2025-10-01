@@ -73,6 +73,7 @@ class User(db.Model):
     is_active = db.Column(db.Boolean, default=True)
 
     posts = db.relationship('Post', backref='author', lazy=True)
+    role = db.Column(db.String(20), default='commentator')
 
     def set_password(self, password):
         """Установка хэшированного пароля"""
@@ -94,5 +95,6 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'created_at': self.created_at.isoformat()
+            'created_at': self.created_at.isoformat(),
+            'role': self.role
         }
